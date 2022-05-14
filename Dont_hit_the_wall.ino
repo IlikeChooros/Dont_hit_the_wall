@@ -2,6 +2,7 @@
 #include "src\input\Button.h"
 #include "src\output\Wall_Drawer.h"
 #include "src\output\Player.h"
+#include "src\output\Game_Sound.h"
 #include "src\Timer.h"
 
 #include <LiquidCrystal.h>
@@ -15,6 +16,7 @@ LiquidCrystal lcd (rs,en,d4,d5,d6,d7);
 #define RESET_BUTTON_PIN 9
 #define NUMBER_OF_ROWS 2
 #define NUMBER_OF_COLLUMNS 16
+#define BUZZER_PIN 8
 
 uint16_t points=0;
 uint16_t current_wall_interval=INITIAL_CURRENT_WALL_INTERVAL;
@@ -31,6 +33,33 @@ Wall_Drawer wall_drawer(&lcd,NUMBER_OF_ROWS,NUMBER_OF_COLLUMNS);
 Player player(&lcd, NUMBER_OF_ROWS);
 
 bool isLost = false;
+
+int16_t keyboard_cat[] = {
+
+    REST,1,
+    REST,1,
+    NOTE_C4,4, NOTE_E4,4, NOTE_G4,4, NOTE_E4,4, 
+    NOTE_C4,4, NOTE_E4,8, NOTE_G4,-4, NOTE_E4,4,
+    NOTE_A3,4, NOTE_C4,4, NOTE_E4,4, NOTE_C4,4,
+    NOTE_A3,4, NOTE_C4,8, NOTE_E4,-4, NOTE_C4,4,
+    NOTE_G3,4, NOTE_B3,4, NOTE_D4,4, NOTE_B3,4,
+    NOTE_G3,4, NOTE_B3,8, NOTE_D4,-4, NOTE_B3,4,
+
+    NOTE_G3,4, NOTE_G3,8, NOTE_G3,-4, NOTE_G3,8, NOTE_G3,4, 
+    NOTE_G3,4, NOTE_G3,4, NOTE_G3,8, NOTE_G3,4,
+    NOTE_C4,4, NOTE_E4,4, NOTE_G4,4, NOTE_E4,4, 
+    NOTE_C4,4, NOTE_E4,8, NOTE_G4,-4, NOTE_E4,4,
+    NOTE_A3,4, NOTE_C4,4, NOTE_E4,4, NOTE_C4,4,
+    NOTE_A3,4, NOTE_C4,8, NOTE_E4,-4, NOTE_C4,4,
+    NOTE_G3,4, NOTE_B3,4, NOTE_D4,4, NOTE_B3,4,
+    NOTE_G3,4, NOTE_B3,8, NOTE_D4,-4, NOTE_B3,4,
+
+    NOTE_G3,-1, 
+  
+};
+int notes = sizeof(keyboard_cat)/sizeof(keyboard_cat[0]);
+
+Game_Sound game_sound(160, BUZZER_PIN, keyboard_cat, notes);
 
 void reset_game()
 {
@@ -107,20 +136,29 @@ void setup()
     move_button._init_();
     move_button.on_press(move_up);
     move_button.on_release(move_down);
+
     reset_button._init_();
     reset_button.on_press(reset_game);
+
     wall_drawer._init_();
     player._init_();
+
     wall_timer.on_times_up(redraw_walls);
     wall_timer.start();
+
     change_speed_timer.on_times_up(increase_speed);
     change_speed_timer.start();
+    
     counter.on_times_up(add_point);
     counter.start();
+
+    game_sound._init_();
+    game_sound.start();
 }
 
 void loop()
 {
+    game_sound.play_music();
     reset_button.read();
     if (!isLost)
     {

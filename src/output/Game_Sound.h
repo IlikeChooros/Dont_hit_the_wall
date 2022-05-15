@@ -2,7 +2,6 @@
 #define _GAME_SOUND_H
 
 #include <Arduino.h>
-#include "../Timer.h"
 
 #define NOTE_B0  31
 #define NOTE_C1  33
@@ -98,19 +97,26 @@
 class Game_Sound
 {
     private:
-        Timer *_timer;
+        int16_t _interval;
+        uint32_t _start_time;
+        uint8_t _music_tempo;
+        bool _play_song;
+
         uint8_t _buzzer_pin;
         int16_t *_music;
-        uint8_t _size;
-        uint16_t _wholenote;
+        uint32_t _size;
+        uint32_t _wholenote;
         uint16_t _note_pointer;
-        uint16_t convert_to_millis(int16_t divider);
+        uint32_t convert_to_millis(int16_t divider);
+
+        void set_interval(uint16_t interval);
         void play_note();
     public:
-        Game_Sound(uint8_t tempo, uint8_t buzzer_pin, int16_t *music, uint8_t size);
+        Game_Sound(uint16_t tempo, uint8_t buzzer_pin, int16_t *music, uint32_t size);
         void _init_();
-        void play_music();
         void start();
+        void check();
+        void reset();
 };
 
 #endif

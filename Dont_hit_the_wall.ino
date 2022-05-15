@@ -16,7 +16,7 @@ LiquidCrystal lcd (rs,en,d4,d5,d6,d7);
 #define RESET_BUTTON_PIN 9
 #define NUMBER_OF_ROWS 2
 #define NUMBER_OF_COLLUMNS 16
-#define BUZZER_PIN 8
+#define BUZZER_PIN 13
 
 uint16_t points=0;
 uint16_t current_wall_interval=INITIAL_CURRENT_WALL_INTERVAL;
@@ -34,33 +34,107 @@ Player player(&lcd, NUMBER_OF_ROWS);
 
 bool isLost = false;
 
-int16_t keyboard_cat[] = {
-
-    REST,1,
-    REST,1,
-    NOTE_C4,4, NOTE_E4,4, NOTE_G4,4, NOTE_E4,4, 
-    NOTE_C4,4, NOTE_E4,8, NOTE_G4,-4, NOTE_E4,4,
-    NOTE_A3,4, NOTE_C4,4, NOTE_E4,4, NOTE_C4,4,
-    NOTE_A3,4, NOTE_C4,8, NOTE_E4,-4, NOTE_C4,4,
-    NOTE_G3,4, NOTE_B3,4, NOTE_D4,4, NOTE_B3,4,
-    NOTE_G3,4, NOTE_B3,8, NOTE_D4,-4, NOTE_B3,4,
-
-    NOTE_G3,4, NOTE_G3,8, NOTE_G3,-4, NOTE_G3,8, NOTE_G3,4, 
-    NOTE_G3,4, NOTE_G3,4, NOTE_G3,8, NOTE_G3,4,
-    NOTE_C4,4, NOTE_E4,4, NOTE_G4,4, NOTE_E4,4, 
-    NOTE_C4,4, NOTE_E4,8, NOTE_G4,-4, NOTE_E4,4,
-    NOTE_A3,4, NOTE_C4,4, NOTE_E4,4, NOTE_C4,4,
-    NOTE_A3,4, NOTE_C4,8, NOTE_E4,-4, NOTE_C4,4,
-    NOTE_G3,4, NOTE_B3,4, NOTE_D4,4, NOTE_B3,4,
-    NOTE_G3,4, NOTE_B3,8, NOTE_D4,-4, NOTE_B3,4,
-
-    NOTE_G3,-1, 
-  
+int16_t ending_music[]=
+{
+    NOTE_D4,8, NOTE_E4,8, NOTE_F4,8, NOTE_G4,8, NOTE_E4,4, NOTE_C4,8, NOTE_D4,1,
 };
-int notes = sizeof(keyboard_cat)/sizeof(keyboard_cat[0]);
 
-Game_Sound game_sound(160, BUZZER_PIN, keyboard_cat, notes);
+int16_t tetris[] = { // tempo = 120
+  NOTE_E5, 4,  NOTE_B4,8,  NOTE_C5,8,  NOTE_D5,4,  NOTE_C5,8,  NOTE_B4,8,
+  NOTE_A4, 4,  NOTE_A4,8,  NOTE_C5,8,  NOTE_E5,4,  NOTE_D5,8,  NOTE_C5,8,
+  NOTE_B4, -4,  NOTE_C5,8,  NOTE_D5,4,  NOTE_E5,4,
+  NOTE_C5, 4,  NOTE_A4,4,  NOTE_A4,8,  NOTE_A4,4,  NOTE_B4,8,  NOTE_C5,8,
 
+  NOTE_D5, -4,  NOTE_F5,8,  NOTE_A5,4,  NOTE_G5,8,  NOTE_F5,8,
+  NOTE_E5, -4,  NOTE_C5,8,  NOTE_E5,4,  NOTE_D5,8,  NOTE_C5,8,
+  NOTE_B4, 4,  NOTE_B4,8,  NOTE_C5,8,  NOTE_D5,4,  NOTE_E5,4,
+  NOTE_C5, 4,  NOTE_A4,4,  NOTE_A4,4, REST, 4,
+
+  NOTE_E5, 4,  NOTE_B4,8,  NOTE_C5,8,  NOTE_D5,4,  NOTE_C5,8,  NOTE_B4,8,
+  NOTE_A4, 4,  NOTE_A4,8,  NOTE_C5,8,  NOTE_E5,4,  NOTE_D5,8,  NOTE_C5,8,
+  NOTE_B4, -4,  NOTE_C5,8,  NOTE_D5,4,  NOTE_E5,4,
+  NOTE_C5, 4,  NOTE_A4,4,  NOTE_A4,8,  NOTE_A4,4,  NOTE_B4,8,  NOTE_C5,8,
+
+  NOTE_D5, -4,  NOTE_F5,8,  NOTE_A5,4,  NOTE_G5,8,  NOTE_F5,8,
+  NOTE_E5, -4,  NOTE_C5,8,  NOTE_E5,4,  NOTE_D5,8,  NOTE_C5,8,
+  NOTE_B4, 4,  NOTE_B4,8,  NOTE_C5,8,  NOTE_D5,4,  NOTE_E5,4,
+  NOTE_C5, 4,  NOTE_A4,4,  NOTE_A4,4, REST, 4,
+  
+
+  NOTE_E5,2,  NOTE_C5,2,
+  NOTE_D5,2,   NOTE_B4,2,
+  NOTE_C5,2,   NOTE_A4,2,
+  NOTE_GS4,2,  NOTE_B4,4,  REST,8, 
+  NOTE_E5,2,   NOTE_C5,2,
+  NOTE_D5,2,   NOTE_B4,2,
+  NOTE_C5,4,   NOTE_E5,4,  NOTE_A5,2,
+  NOTE_GS5,2,
+};
+
+int16_t ultra_epic[]={ // tempo = 140
+
+  NOTE_A5, -8, NOTE_G5, -4, //50
+  NOTE_A5, -8, NOTE_G5, -4,
+  NOTE_AS5, 8, NOTE_A5, 8, NOTE_G5, 8, NOTE_F5, 8,
+  NOTE_A5, -8, NOTE_G5, -8, NOTE_D5, 8,
+  NOTE_A5, -8, NOTE_G5, -8, NOTE_D5, 8,
+  NOTE_A5, -8, NOTE_G5, -8, NOTE_D5, 8,
+
+  NOTE_AS5, 4, NOTE_C6, 4, NOTE_A5, 4, NOTE_AS5, 4,
+  NOTE_G5,16, NOTE_D5,16, NOTE_D6,16, NOTE_D5,16, NOTE_C6,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16,//56 //r
+  NOTE_A5,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16, NOTE_A5,16, NOTE_D5,16, NOTE_G5,16, NOTE_D5,16,
+  NOTE_A5,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16, NOTE_C6,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16,
+  NOTE_A5,16, NOTE_D5,16, NOTE_F5,16, NOTE_D5,16, NOTE_A5,16, NOTE_D5,16, NOTE_G5,16, NOTE_D5,16,
+
+  NOTE_G5,16, NOTE_D5,16, NOTE_D6,16, NOTE_D5,16, NOTE_C6,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16,//61
+  NOTE_A5,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16, NOTE_A5,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16,
+  NOTE_A5,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16, NOTE_C6,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16,
+  NOTE_A5,16, NOTE_D5,16, NOTE_F5,16, NOTE_D5,16, NOTE_A5,16, NOTE_D5,16, NOTE_G5,16, NOTE_D5,16,
+  NOTE_G5,16, NOTE_D5,16, NOTE_D6,16, NOTE_D5,16, NOTE_C6,16, NOTE_D5,16, NOTE_AS5,16, NOTE_D5,16,
+
+  NOTE_G5, 16, NOTE_D5, 16, NOTE_D6, 16, NOTE_D5, 16, NOTE_C6, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16,
+  NOTE_A5, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16, NOTE_A5, 16, NOTE_D5, 16, NOTE_G5, 16, NOTE_D5, 16,
+  NOTE_A5, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16, NOTE_C6, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16,
+  
+  NOTE_G5, 16, NOTE_D5, 16, NOTE_D6, 16, NOTE_D5, 16, NOTE_C6, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16, //25
+  NOTE_A5, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16, NOTE_A5, 16, NOTE_D5, 16, NOTE_G5, 16, NOTE_D5, 16,
+  NOTE_A5, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16, NOTE_C6, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16,
+  NOTE_A5, 16, NOTE_D5, 16, NOTE_F5, 16, NOTE_D5, 16, NOTE_A5, 16, NOTE_D5, 16, NOTE_G5, 16, NOTE_D5, 16,
+  NOTE_AS5, 16, NOTE_D5, 16, NOTE_D6, 16, NOTE_D5, 16, NOTE_C6, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16,
+
+  NOTE_A5, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16, NOTE_A5, 16, NOTE_D5, 16, NOTE_G5, 16, NOTE_D5, 16,
+  NOTE_A5, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16, NOTE_C6, 16, NOTE_D5, 16, NOTE_AS5, 16, NOTE_D5, 16,
+  NOTE_A5, 16, NOTE_D5, 16, NOTE_F5, 16, NOTE_D5, 16, NOTE_A5, 16, NOTE_D5, 16, NOTE_G5, 16, NOTE_D5, 16,
+  NOTE_C6, 16, NOTE_C6, 16, NOTE_F6, 16, NOTE_D6, 8, REST, 16, REST, 8,
+    REST, 4, NOTE_C6, 16, NOTE_AS5, 16,
+
+  NOTE_C6, -8,  NOTE_F6, -8, NOTE_D6, -4, //35
+  NOTE_C6, 8, NOTE_AS5, 8,
+  NOTE_C6, 8, NOTE_F6, 16, NOTE_D6, 8, REST, 16, REST, 8,
+  REST, 4, NOTE_C6, 8, NOTE_D6, 8,
+  NOTE_DS6, -8, NOTE_F6, -8,
+
+  NOTE_D6, -8, REST, 16, NOTE_DS6, 8, REST, 8, //40
+  NOTE_C6, 8, NOTE_F6, 16, NOTE_D6, 8, REST, 16, REST, 8,
+  REST, 4, NOTE_C6, 8, NOTE_AS5, 8,
+  NOTE_C6, -8,  NOTE_F6, -8, NOTE_D6, -4,
+  NOTE_C6, 8, NOTE_AS5, 8,
+
+  NOTE_C6, 8, NOTE_F6, 16, NOTE_D6, 8, REST, 16, REST, 8, //45
+  REST, 4, NOTE_C6, 8, NOTE_D6, 8,
+  NOTE_DS6, -8, NOTE_F6, -8,
+  NOTE_D5, 8, NOTE_FS5, 8, NOTE_F5, 8, NOTE_A5, 8,
+  NOTE_A5, -8, NOTE_G5, -4,
+};
+
+Game_Sound game_sound_ultra_epic(140, BUZZER_PIN, ultra_epic, sizeof(ultra_epic)/sizeof(ultra_epic[0]));
+
+Game_Sound game_sound_tetris(120, BUZZER_PIN, tetris, sizeof(tetris)/sizeof(tetris[0]));
+
+Game_Sound game_sound_ending(108, BUZZER_PIN, ending_music, sizeof(ending_music)/sizeof(ending_music[0]));
+
+//  git config --global user.email "you@example.com"
+// git config --global user.name "Your Name"
 void reset_game()
 {
     lcd.clear();
@@ -72,6 +146,10 @@ void reset_game()
     points=0;
 
     player.reset();
+
+    game_sound_tetris.reset();
+    game_sound_ultra_epic.reset();
+    game_sound_ending.reset();
 
     isLost=false;
 }
@@ -152,19 +230,47 @@ void setup()
     counter.on_times_up(add_point);
     counter.start();
 
-    game_sound._init_();
-    game_sound.start();
+    game_sound_tetris._init_();
+    game_sound_tetris.start();
+
+    game_sound_ultra_epic._init_();
+
+    game_sound_ending._init_();
 }
 
+
+bool clear_sound=true;
 void loop()
 {
-    game_sound.play_music();
     reset_button.read();
     if (!isLost)
     {
+        if (points<11)
+        {
+            game_sound_tetris.check();
+        }
+        else if (points==11)
+        {
+            game_sound_ultra_epic.start();
+        }
+        else if(points>11)
+        {
+            game_sound_ultra_epic.check();
+        }
         move_button.read();
         wall_timer.check();
         change_speed_timer.check();
         counter.check();
+    }
+    else if (isLost)
+    {
+        if (clear_sound){
+            noTone(BUZZER_PIN);
+            clear_sound=false;
+            game_sound_ending.start();
+        }
+        game_sound_ending.check();
+        
+
     }
 }

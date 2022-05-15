@@ -8,8 +8,6 @@ Game_Sound::Game_Sound(uint16_t tempo, uint8_t buzzer_pin, int16_t *music, uint3
     _size=size;
     _note_pointer=0;
     _interval=0;
-    _play_song=false;
-    // _timer->on_times_up(this->play_note);
 }
 
 void Game_Sound::_init_()
@@ -20,20 +18,6 @@ void Game_Sound::_init_()
 void Game_Sound::start()
 {
     _start_time=millis();
-    _play_song=true;
-}
-
-void Game_Sound::play_note()
-{
-    int16_t note=_music[_note_pointer++];
-    int16_t divider=_music[_note_pointer++];
-    tone(_buzzer_pin,note);
-    set_interval(convert_to_millis(divider));
-
-    if (_note_pointer-1>=_size)
-    {
-        _note_pointer=0;
-    }
 }
 
 void Game_Sound::check()
@@ -69,4 +53,17 @@ uint32_t Game_Sound::convert_to_millis(int16_t divider)
 void Game_Sound::set_interval(uint16_t interval)
 {
     _interval=interval;
+}
+
+void Game_Sound::play_note()
+{
+    int16_t note=_music[_note_pointer++];
+    int16_t divider=_music[_note_pointer++];
+    tone(_buzzer_pin,note);
+    set_interval(convert_to_millis(divider));
+
+    if (_note_pointer-1>=_size)
+    {
+        _note_pointer=0;
+    }
 }

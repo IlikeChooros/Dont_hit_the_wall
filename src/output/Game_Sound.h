@@ -100,7 +100,6 @@ class Game_Sound
         int16_t _interval;
         uint32_t _start_time;
         uint8_t _music_tempo;
-        bool _play_song;
 
         uint8_t _buzzer_pin;
         int16_t *_music;

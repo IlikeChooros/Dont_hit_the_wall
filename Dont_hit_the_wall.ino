@@ -133,8 +133,6 @@ Game_Sound game_sound_tetris(120, BUZZER_PIN, tetris, sizeof(tetris)/sizeof(tetr
 
 Game_Sound game_sound_ending(108, BUZZER_PIN, ending_music, sizeof(ending_music)/sizeof(ending_music[0]));
 
-//  git config --global user.email "you@example.com"
-// git config --global user.name "Your Name"
 void reset_game()
 {
     lcd.clear();
@@ -271,6 +269,5 @@ void loop()
         }
         game_sound_ending.check();
         
-
     }
 }
